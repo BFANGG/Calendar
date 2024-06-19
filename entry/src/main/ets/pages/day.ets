@@ -36,7 +36,6 @@ export struct day {
     else return BackgroundColor
   }
 
-
   private changeSelectDate() {
     this.selectDate = this.showDate;
   }
@@ -44,8 +43,14 @@ export struct day {
   build() {
     Row() {
       Column() {
-        Text(String(this.showDate[2]))
-          .fontColor(this.getTextColor())
+        if (JSON.stringify(this.showDate) == JSON.stringify(getToday())) {
+          Text(String("今"))
+            .fontColor(this.getTextColor())
+        }
+        else {
+          Text(String(this.showDate[2]))
+            .fontColor(this.getTextColor())
+        }
       }
       .width('100%')
     }
@@ -58,7 +63,7 @@ export struct day {
     .borderRadius(ItemHeight / 2)
     .aspectRatio(1)
     .onClick(() => {
-      if (this.showDate[1] == this.monthStart[1]){
+      if (this.showDate[1] == this.monthStart[1]) {
         this.changeSelectDate()
       }
     })

@@ -22,8 +22,8 @@ export struct calendar {
   private weeks: string[] = ["日", "一", "二", "三", "四", "五", "六",]
   // ---------------------------------
   // 父组件中@State, @StorageLink和@Link 和子组件@Link可以建立双向数据同步，反之亦然。
-  // 当前选中的日期，默认为今天
-  @State @Watch('selectDateChanged') selectDate: number[] = getToday();
+  // 当前选中的日期
+  @State @Watch('selectDateChanged') selectDate: number[] = [];
   // @Watch用于监听状态变量的变化，当状态变量变化时，@Watch的回调方法将被调用。
   // 当前日历所处月份的1号
   @State @Watch('currentMonthChanged') currentMonth: number[] = getToday();
@@ -43,6 +43,10 @@ export struct calendar {
     this.changeView();
   }
 
+  private selectDateChanged() {
+    this.onSelect(this.selectDate);
+  }
+
   // 改变渲染组件的data值从而改变视图
   // 如果currentIndex=0, 循环模3的视图容器，按上个月就是+1模3 ，按下个月+2模3
   private changeView() {
@@ -52,21 +56,16 @@ export struct calendar {
     this.data[(index + 1) % 3] = getNextNMonth(this.data[index], 1);
   }
 
-  // 用户点击完成的事件
+  // 用户点击“完成”的事件
   private onFinish = () => {
 
   }
-  // 用户选中日期的事件
-  private onSelect = () => {
+  // 用户选择日期的事件
+  private onSelect = (date: number[]) => {
 
   }
 
-  private selectDateChanged() {
-    console.info("选定的日期改变了")
-    this.onSelect()
-  }
-
-  private backToday() {
+  backToday() {
     //标题刷新
     this.currentMonth = getToday()
     //数据刷新
