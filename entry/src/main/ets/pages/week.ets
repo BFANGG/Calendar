@@ -11,6 +11,10 @@ export struct week {
   // 父组件中@State如果装饰的数组，其数组项也可以初始化@Prop。
   // 当前周组件要渲染的周数据
   @State data: number[][] = []
+  // 用户选中日期的事件
+  private onSelect = () => {
+
+  }
 
   aboutToAppear() {
     console.info("执行 aboutToAppear")
@@ -30,7 +34,9 @@ export struct week {
           day({
             selectDate: $selectDate,
             showDate: item,
-            monthStart: this.monthStart })
+            monthStart: this.monthStart,
+            onSelect: this.onSelect()
+          })
         }
         .height('100%')
         .layoutWeight(1)

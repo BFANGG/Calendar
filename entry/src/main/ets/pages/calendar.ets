@@ -54,8 +54,13 @@ export struct calendar {
     this.data[(index + 1) % 3] = getNextNMonth(this.data[index], 1);
   }
 
-  // 点击完成的事件
-  private onFinish = ()=>{
+  // 用户点击完成的事件
+  private onFinish = () =>{
+
+  }
+
+  // 用户选中日期的事件
+  private onSelect = () =>{
 
   }
 
@@ -196,7 +201,8 @@ export struct calendar {
           ForEach(this.data, (item: number[]) => {
             month({
               selectDate: $selectDate,
-              monthStart: item
+              monthStart: item,
+              onSelect: this.onSelect()
             })
           })
         }
