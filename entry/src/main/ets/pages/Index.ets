@@ -15,11 +15,11 @@ struct Index {
   build() {
     Column() {
       calendar({
-        selectDate: getToday(),
-        onFinish: this.onFinish(),
-        onSelect: (date: number[]) => {
+        // selectDate: getToday(),
+        onFinish: (date: number[]) => {
           console.info(String(date[0]) + String(date[1]) + String(date[2]))
           //在日期这里触发一个日期选中事件，就可以得到选中日期
+          //在这里可以处理点击完成后的事件，比如获取selectDate值或者返回等操作
         }
       }
       )

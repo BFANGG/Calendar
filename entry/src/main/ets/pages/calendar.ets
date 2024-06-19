@@ -44,7 +44,7 @@ export struct calendar {
   }
 
   private selectDateChanged() {
-    this.onSelect(this.selectDate);
+    this.onSelect();
   }
 
   // 改变渲染组件的data值从而改变视图
@@ -57,11 +57,11 @@ export struct calendar {
   }
 
   // 用户点击“完成”的事件
-  private onFinish = () => {
+  private onFinish = (selectDate: number[]) => {
 
   }
   // 用户选择日期的事件
-  private onSelect = (date: number[]) => {
+  private onSelect = () => {
 
   }
 
@@ -159,7 +159,7 @@ export struct calendar {
             }
             .onClick(() => {
               console.info('点击“完成”')
-              this.onFinish()
+              this.onFinish(this.selectDate)
             })
             .padding({ left: 5, right: 5 })
             .borderRadius(8)
