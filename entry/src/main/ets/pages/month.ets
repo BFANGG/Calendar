@@ -11,10 +11,6 @@ export struct month {
   @Prop monthStart: number[] = [];
   // 一个月视图中的六周/五周，每个元素是每行行末日期
   @State data: number[][] = []
-  // 用户选中日期的事件
-  private onSelect = () => {
-
-  }
 
   aboutToAppear() {
     //获取月视图第一天
@@ -54,7 +50,6 @@ export struct month {
               selectDate: $selectDate,
               weekStart: item,
               monthStart: this.monthStart,
-              onSelect: this.onSelect
             }
             )
           }

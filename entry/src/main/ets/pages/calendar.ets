@@ -23,11 +23,10 @@ export struct calendar {
   // ---------------------------------
   // 父组件中@State, @StorageLink和@Link 和子组件@Link可以建立双向数据同步，反之亦然。
   // 当前选中的日期，默认为今天
-  @State selectDate: number[] = getToday();
+  @State @Watch('selectDateChanged') selectDate: number[] = getToday();
   // @Watch用于监听状态变量的变化，当状态变量变化时，@Watch的回调方法将被调用。
   // 当前日历所处月份的1号
   @State @Watch('currentMonthChanged') currentMonth: number[] = getToday();
-
   // 当前视图上个月，这个月，下个月1号日期
   @State data: number[][] = [
     getNextNMonth(this.currentMonth, -1),
@@ -38,7 +37,6 @@ export struct calendar {
   @State currentIndex: number = 1;
   // swiperController
   private swiperController: SwiperController = new SwiperController()
-
 
   // swiper切换导致currentMonth变化，更新新的data
   private currentMonthChanged() {
@@ -55,13 +53,17 @@ export struct calendar {
   }
 
   // 用户点击完成的事件
-  private onFinish = () =>{
+  private onFinish = () => {
+
+  }
+  // 用户选中日期的事件
+  private onSelect = () => {
 
   }
 
-  // 用户选中日期的事件
-  private onSelect = () =>{
-
+  private selectDateChanged() {
+    console.info("选定的日期改变了")
+    this.onSelect()
   }
 
   private backToday() {
@@ -202,7 +204,6 @@ export struct calendar {
             month({
               selectDate: $selectDate,
               monthStart: item,
-              onSelect: this.onSelect()
             })
           })
         }

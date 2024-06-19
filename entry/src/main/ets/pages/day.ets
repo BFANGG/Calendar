@@ -36,14 +36,9 @@ export struct day {
     else return BackgroundColor
   }
 
-  // 用户选中日期的事件
-  private onSelect = () =>{
-
-  }
 
   private changeSelectDate() {
     this.selectDate = this.showDate;
-    this.onSelect();
   }
 
   build() {
