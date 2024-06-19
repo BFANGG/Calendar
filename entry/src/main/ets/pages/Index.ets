@@ -1,16 +1,19 @@
+import { calendar } from './calendar'
+
+@Entry
+@Preview
 @Component
 struct Index {
   @State message: string = 'Hello World';
 
+  private onFinish() {
+    console.info("点击 完成 要做的事件")
+  }
+
   build() {
-    Row() {
-      Column() {
-        Text(this.message)
-          .fontSize(50)
-          .fontWeight(FontWeight.Bold)
-      }
-      .width('100%')
-    }
+    Column() {
+      calendar({ onFinish: this.onFinish() })
+    }.width('100%')
     .height('100%')
   }
 }

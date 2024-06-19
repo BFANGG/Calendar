@@ -1,27 +1,12 @@
-import { TitleStyle } from './consts'
+import { TopTitleStyle, WeekTitleStyle } from './consts'
 import { MyDataSource } from './MyDataSource'
+import { getNextNMonth, getToday } from './tools'
+import { month } from './month'
 
-@Entry
 @Preview
 @Component
-struct calendar {
-  // 当前选中的日期，默认为今天
-  private selectDate: number[] = [2024, 6, 17];
-  // 当前日历所处月份
-  private titleMonth: number[] = [2024, 6];
-  // swiperController
-  private swiperController: SwiperController = new SwiperController()
-  // 当前视图目前，上个月，下个月数据源
-  private data: MyDataSource = new MyDataSource([]);
-
-  aboutToAppear(): void {
-    let list = []
-    for (var i = 1; i <= 3; i++) {
-      list.push(i.toString());
-    }
-    this.data = new MyDataSource(list)
-  }
-
+export struct calendar {
+  //------------ 样式控制-----------
   // 当前月视图 是否显示 上/下个月日期, 默认为ture；
   private showOtherMonth = true;
   // “回到今天”快捷键是否显示，默认：true
@@ -36,21 +21,56 @@ struct calendar {
   private selectConfirmColor: string = "blue"
   // 星期标题，默认：["日","一","二","三","四","五","六",]
   private weeks: string[] = ["日", "一", "二", "三", "四", "五", "六",]
-  // 星期标题字体大小，默认：12
-  private weekTitleFontSize: number = 12
-  private TopTitleStyle: TitleStyle = {
-    FontColor: "#252a34",
-    FontSize: 15,
-    FontWeight: FontWeight.Regular,
-    Height: 50,
-    BackgroundColor: 'white'
+  // ---------------------------------
+  // 父组件中@State, @StorageLink和@Link 和子组件@Link可以建立双向数据同步，反之亦然。
+  // 当前选中的日期，默认为今天
+  @State selectDate: number[] = getToday();
+  // @Watch用于监听状态变量的变化，当状态变量变化时，@Watch的回调方法将被调用。
+  // 当前日历所处月份的1号
+  @State @Watch('currentMonthChanged') currentMonth: number[] = getToday();
+
+  // 当前视图上个月，这个月，下个月1号日期
+  @State data: number[][] = [
+    getNextNMonth(this.currentMonth, -1),
+    getNextNMonth(this.currentMonth, 0),
+    getNextNMonth(this.currentMonth, 1)
+  ];
+  // 当前视图索引,data渲染成三个组件，当前月在下标为1处
+  @State currentIndex: number = 1;
+  // swiperController
+  private swiperController: SwiperController = new SwiperController()
+
+
+  // swiper切换导致currentMonth变化，更新新的data
+  private currentMonthChanged() {
+    this.changeView();
   }
-  private WeekTitleStyle = {
-    FontColor: Color.Gray,
-    FontSize: 15,
-    FontWeight: FontWeight.Regular,
-    Height: 15,
-    BackgroundColor: 'white'
+
+  // 改变渲染组件的data值从而改变视图
+  // 如果currentIndex=0, 循环模3的视图容器，按上个月就是+1模3 ，按下个月+2模3
+  private changeView() {
+    let index = this.currentIndex;
+    this.data[index] = this.currentMonth;
+    this.data[(index + 2) % 3] = getNextNMonth(this.data[index], -1);
+    this.data[(index + 1) % 3] = getNextNMonth(this.data[index], 1);
+  }
+
+  // 点击完成的事件
+  private onFinish = ()=>{
+
+  }
+
+  private backToday() {
+    //标题刷新
+    this.currentMonth = getToday()
+    //数据刷新
+    this.data = [
+      getNextNMonth(this.currentMonth, -1),
+      getNextNMonth(this.currentMonth, 0),
+      getNextNMonth(this.currentMonth, 1)
+    ]
+    //index刷新
+    this.currentIndex = 1;
   }
 
   build() {
@@ -64,11 +84,12 @@ struct calendar {
             // 回到今天快捷键
             Row() {
               Text(this.FastToday)
-                .fontSize(this.TopTitleStyle.FontSize)
-                .fontColor(this.TopTitleStyle.FontColor)
+                .fontSize(TopTitleStyle.FontSize)
+                .fontColor(TopTitleStyle.FontColor)
             }
             .onClick(() => {
               console.info('点击“回到今天”')
+              this.backToday()
             })
             .padding({ left: 5, right: 5 })
             .borderRadius(8)
@@ -85,21 +106,22 @@ struct calendar {
         Row() {
           Row() {
             Text("<")
-              .fontSize(this.TopTitleStyle.FontSize)
-              .fontColor(this.TopTitleStyle.FontColor)
+              .fontSize(TopTitleStyle.FontSize)
+              .fontColor(TopTitleStyle.FontColor)
           }
           .onClick(() => {
-            console.info('点击 “上个月"')
+            console.info('点击了 “上个月"')
             this.swiperController.showPrevious()
+            console.info("目前是" + this.currentMonth[0] + "年" + this.currentMonth[1] + "月")
           })
           .justifyContent(FlexAlign.Center)
           .width('20%')
           .height('100%')
 
           Row() {
-            Text(this.titleMonth[0].toString() + "年" + this.titleMonth[1].toString() + "月")
-              .fontSize(this.TopTitleStyle.FontSize)
-              .fontColor(this.TopTitleStyle.FontColor)
+            Text(this.currentMonth[0].toString() + "年" + this.currentMonth[1].toString() + "月")
+              .fontSize(TopTitleStyle.FontSize)
+              .fontColor(TopTitleStyle.FontColor)
           }
           .width('60%')
           .height('100%')
@@ -107,8 +129,8 @@ struct calendar {
 
           Row() {
             Text(">")
-              .fontSize(this.TopTitleStyle.FontSize)
-              .fontColor(this.TopTitleStyle.FontColor)
+              .fontSize(TopTitleStyle.FontSize)
+              .fontColor(TopTitleStyle.FontColor)
           }
           .onClick(() => {
             console.info('点击 “下个月"')
@@ -127,11 +149,12 @@ struct calendar {
             // 回到今天快捷键
             Row() {
               Text(this.selectConfirm)
-                .fontSize(this.TopTitleStyle.FontSize)
-                .fontColor(this.TopTitleStyle.FontColor)
+                .fontSize(TopTitleStyle.FontSize)
+                .fontColor(TopTitleStyle.FontColor)
             }
             .onClick(() => {
               console.info('点击“完成”')
+              this.onFinish()
             })
             .padding({ left: 5, right: 5 })
             .borderRadius(8)
@@ -147,49 +170,47 @@ struct calendar {
 
       }
       .width('100%')
-      .height(this.TopTitleStyle.Height)
-      .backgroundColor(this.TopTitleStyle.BackgroundColor)
+      .height(TopTitleStyle.Height)
+      .backgroundColor(TopTitleStyle.BackgroundColor)
 
       // 星期标题区域
       Row() {
         ForEach(["日", "一", "二", "三", "四", "五", "六"], (item: string, index: number) => {
           Column() {
             Text(item)
-              .fontColor(this.WeekTitleStyle.FontColor)
-              .fontSize(this.WeekTitleStyle.FontSize)
-              .fontWeight(this.WeekTitleStyle.FontWeight)
+              .fontColor(WeekTitleStyle.FontColor)
+              .fontSize(WeekTitleStyle.FontSize)
+              .fontWeight(WeekTitleStyle.FontWeight)
           }
           .layoutWeight(1)
           .height('100%')
         })
       }
       .width('100%')
-      .height(this.WeekTitleStyle.Height)
-      .backgroundColor(this.WeekTitleStyle.BackgroundColor)
+      .height(WeekTitleStyle.Height)
+      .backgroundColor(WeekTitleStyle.BackgroundColor)
 
       // 日期区域
       Column() {
         // Swiper实现试图的滑动切换，保存 上个月，当前月，下个月日期
         Swiper(this.swiperController) {
-          LazyForEach(this.data, (item: string) => {
-            Text(item)
-              .width('90%')
-              .height(160)
-              .backgroundColor(0xAFEEEE)
-              .textAlign(TextAlign.Center)
-              .fontSize(30)
-          }, item => item)
+          ForEach(this.data, (item: number[]) => {
+            month({
+              selectDate: $selectDate,
+              monthStart: item
+            })
+          })
         }
-        .cachedCount(2)
-        .index(1)
-        .interval(4000)
-        .indicator(true)
+        .cachedCount(3)
         .loop(true)
-        .duration(1000)
-        .itemSpace(0)
-        .curve(Curve.Linear)
+        .index(this.currentIndex) //当前显示的子组件的索引值
+        .indicator(false)
+        .width('100%')
+        // 当前显示的子组件索引变化时触发该事件,返回值为当前显示的子组件的索引值。
         .onChange((index: number) => {
-          console.info(index.toString())
+          this.currentIndex = index;
+          this.currentMonth = this.data[this.currentIndex];
+          console.info("SwiperIndex:" + index.toString())
         })
 
       }
@@ -197,9 +218,6 @@ struct calendar {
       .height('80%')
 
       Column() {
-        Button("sdd").onClick(()=>{
-          console.info("sddsdd")
-        }).height(30)
 
       }
     }
