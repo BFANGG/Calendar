@@ -5,7 +5,7 @@ import { getToday } from './tools'
 export struct day {
   @Link selectDate: number[]
   //当前日组件日期
-  @Prop showDate: number[] = []
+  private showDate: number[]
   //当前日所属月组件的月份1号,用于将不属于该月的日期加灰。
   @Prop monthStart: number[]
 
@@ -22,6 +22,9 @@ export struct day {
       if (JSON.stringify(this.showDate) == JSON.stringify(this.selectDate)
         || JSON.stringify(this.showDate) == JSON.stringify(getToday())) {
         return BackgroundColor
+      }
+      else{
+        return DateStyle.FontColor.defaultColor
       }
     }
     // 不属于本月
