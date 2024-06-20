@@ -1,6 +1,6 @@
 import { getStartDate, getNextNDay } from './tools'
 import { week } from './week'
-import { BackgroundColor, ItemHeight } from './consts';
+import { BackgroundColor } from './consts';
 
 @Component
 export struct month {
@@ -9,8 +9,13 @@ export struct month {
   @Link selectDate: number[]
   // 当前月组件要显示的月份的1号
   @Prop monthStart: number[] = [];
-  // 一个月视图中的六周/五周，每个元素是每行行末日期
+  //  一个月视图中的六周/五周，每个元素是每行行末日期
   @State data: number[][] = []
+  //----------样式控制属性----------
+  //是否显示其它月日期
+  private showOtherMonth: boolean
+  // 每行高度,默认为50
+  private ItemHeight: number
 
   aboutToAppear() {
     //获取月视图第一天
@@ -50,10 +55,12 @@ export struct month {
               selectDate: $selectDate,
               weekStart: item,
               monthStart: this.monthStart,
+              showOtherMonth: this.showOtherMonth,
+              ItemHeight:this.ItemHeight
             }
             )
           }
-          .height(ItemHeight)
+          .height(this.ItemHeight)
           .width('100%')
         })
       }

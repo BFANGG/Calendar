@@ -1,11 +1,27 @@
-import { TopTitleStyle, WeekTitleStyle } from './consts'
+import { TitleStyle } from './consts'
 import { getNextNMonth, getToday } from './tools'
 import { month } from './month'
 
 @Preview
 @Component
 export struct calendar {
-  //------------ 样式控制-----------
+  //------------ 样式控制属性-----------
+  // 主标题样式通用设置
+  private TopTitleStyle: TitleStyle = {
+    FontColor: "#252a34",
+    FontSize: 15,
+    FontWeight: FontWeight.Regular,
+    Height: 50,
+    BackgroundColor: 'white'
+  }
+  // 星期标题样式通用设置
+  private WeekTitleStyle: TitleStyle = {
+    FontColor: Color.Gray,
+    FontSize: 15,
+    FontWeight: FontWeight.Regular,
+    Height: 15,
+    BackgroundColor: 'white'
+  }
   // 当前月视图 是否显示 上/下个月日期, 默认为ture；
   private showOtherMonth = true;
   // “回到今天”快捷键是否显示，默认：true
@@ -20,7 +36,11 @@ export struct calendar {
   private selectConfirmColor: string = "blue"
   // 星期标题，默认：["日","一","二","三","四","五","六",]
   private weeks: string[] = ["日", "一", "二", "三", "四", "五", "六",]
-  // ---------------------------------
+  // Swiper属性，设置子组件与子组件之间间隙, 默认:15
+  private ItemSpace: string | number = 15
+  // 每行高度,默认为50
+  private ItemHeight: number = 50
+  // ---------------状态管理变量---------------
   // 父组件中@State, @StorageLink和@Link 和子组件@Link可以建立双向数据同步，反之亦然。
   // 当前选中的日期
   @State @Watch('selectDateChanged') selectDate: number[] = [];
@@ -38,6 +58,7 @@ export struct calendar {
   // swiperController
   private swiperController: SwiperController = new SwiperController()
 
+  // -----------------方法-------------
   // swiper切换导致currentMonth变化，更新新的data
   private currentMonthChanged() {
     this.changeView();
@@ -68,7 +89,6 @@ export struct calendar {
   backToday() {
     //标题刷新
     this.currentMonth = getToday()
-    //数据刷新
     this.data = [
       getNextNMonth(this.currentMonth, -1),
       getNextNMonth(this.currentMonth, 0),
@@ -89,8 +109,8 @@ export struct calendar {
             // 回到今天快捷键
             Row() {
               Text(this.FastToday)
-                .fontSize(TopTitleStyle.FontSize)
-                .fontColor(TopTitleStyle.FontColor)
+                .fontSize(this.TopTitleStyle.FontSize)
+                .fontColor(this.TopTitleStyle.FontColor)
             }
             .onClick(() => {
               console.info('点击“回到今天”')
@@ -98,7 +118,7 @@ export struct calendar {
             })
             .padding({ left: 5, right: 5 })
             .borderRadius(8)
-            .backgroundColor('gray')
+            .backgroundColor(this.FastTodayColor)
             .height('60%')
             .justifyContent(FlexAlign.Center)
           }
@@ -111,8 +131,8 @@ export struct calendar {
         Row() {
           Row() {
             Text("<")
-              .fontSize(TopTitleStyle.FontSize)
-              .fontColor(TopTitleStyle.FontColor)
+              .fontSize(this.TopTitleStyle.FontSize)
+              .fontColor(this.TopTitleStyle.FontColor)
           }
           .onClick(() => {
             console.info('点击了 “上个月"')
@@ -125,8 +145,8 @@ export struct calendar {
 
           Row() {
             Text(this.currentMonth[0].toString() + "年" + this.currentMonth[1].toString() + "月")
-              .fontSize(TopTitleStyle.FontSize)
-              .fontColor(TopTitleStyle.FontColor)
+              .fontSize(this.TopTitleStyle.FontSize)
+              .fontColor(this.TopTitleStyle.FontColor)
           }
           .width('60%')
           .height('100%')
@@ -134,8 +154,8 @@ export struct calendar {
 
           Row() {
             Text(">")
-              .fontSize(TopTitleStyle.FontSize)
-              .fontColor(TopTitleStyle.FontColor)
+              .fontSize(this.TopTitleStyle.FontSize)
+              .fontColor(this.TopTitleStyle.FontColor)
           }
           .onClick(() => {
             console.info('点击 “下个月"')
@@ -150,24 +170,21 @@ export struct calendar {
 
         //靠右区域---完成并返回键
         Row() {
-          if (this.showFastToday) {
-            // 回到今天快捷键
-            Row() {
-              Text(this.selectConfirm)
-                .fontSize(TopTitleStyle.FontSize)
-                .fontColor(TopTitleStyle.FontColor)
-            }
-            .onClick(() => {
-              console.info('点击“完成”')
-              this.onFinish(this.selectDate)
-            })
-            .padding({ left: 5, right: 5 })
-            .borderRadius(8)
-            .backgroundColor('blue')
-            .width('80%')
-            .height('60%')
-            .justifyContent(FlexAlign.Center)
+          Row() {
+            Text(this.selectConfirm)
+              .fontSize(this.TopTitleStyle.FontSize)
+              .fontColor(this.TopTitleStyle.FontColor)
           }
+          .onClick(() => {
+            console.info('点击“完成”')
+            this.onFinish(this.selectDate)
+          })
+          .padding({ left: 5, right: 5 })
+          .borderRadius(8)
+          .backgroundColor(this.selectConfirmColor)
+          .width('80%')
+          .height('60%')
+          .justifyContent(FlexAlign.Center)
         }
         .width('30%')
         .height("100%")
@@ -175,25 +192,25 @@ export struct calendar {
 
       }
       .width('100%')
-      .height(TopTitleStyle.Height)
-      .backgroundColor(TopTitleStyle.BackgroundColor)
+      .height(this.TopTitleStyle.Height)
+      .backgroundColor(this.TopTitleStyle.BackgroundColor)
 
       // 星期标题区域
       Row() {
-        ForEach(["日", "一", "二", "三", "四", "五", "六"], (item: string, index: number) => {
+        ForEach(this.weeks, (item: string, index: number) => {
           Column() {
             Text(item)
-              .fontColor(WeekTitleStyle.FontColor)
-              .fontSize(WeekTitleStyle.FontSize)
-              .fontWeight(WeekTitleStyle.FontWeight)
+              .fontColor(this.WeekTitleStyle.FontColor)
+              .fontSize(this.WeekTitleStyle.FontSize)
+              .fontWeight(this.WeekTitleStyle.FontWeight)
           }
           .layoutWeight(1)
           .height('100%')
         })
       }
       .width('100%')
-      .height(WeekTitleStyle.Height)
-      .backgroundColor(WeekTitleStyle.BackgroundColor)
+      .height(this.WeekTitleStyle.Height)
+      .backgroundColor(this.WeekTitleStyle.BackgroundColor)
 
       // 日期区域
       Column() {
@@ -203,9 +220,13 @@ export struct calendar {
             month({
               selectDate: $selectDate,
               monthStart: item,
+              showOtherMonth: this.showOtherMonth,
+              ItemHeight: this.ItemHeight
             })
           })
+
         }
+        .itemSpace(this.ItemSpace)
         .cachedCount(3)
         .loop(true)
         .index(this.currentIndex) //当前显示的子组件的索引值

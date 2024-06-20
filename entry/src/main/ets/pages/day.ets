@@ -1,4 +1,4 @@
-import { BackgroundColor, ItemHeight, ItemSpace, DateStyle } from './consts'
+import { BackgroundColor, DateStyle } from './consts'
 import { getToday } from './tools'
 
 @Component
@@ -9,30 +9,46 @@ export struct day {
   //当前日所属月组件的月份1号,用于将不属于该月的日期加灰。
   @Prop monthStart: number[]
 
+  //----------样式控制属性----------
+  //是否显示其它月日期
+  private showOtherMonth: boolean
+  // 每行高度,默认为50
+  private ItemHeight: number
+
   private getTextColor(): ResourceColor {
-    //如果是今天，或者是选中日期，字体颜色为总背景颜色
-    if (JSON.stringify(this.showDate) == JSON.stringify(this.selectDate)
-      || JSON.stringify(this.showDate) == JSON.stringify(getToday())) {
-      return BackgroundColor
+    // 属于本月
+    if (this.showDate[1] == this.monthStart[1]) {
+      //且，如果是今天，或者是选中日期，字体颜色为总背景颜色
+      if (JSON.stringify(this.showDate) == JSON.stringify(this.selectDate)
+        || JSON.stringify(this.showDate) == JSON.stringify(getToday())) {
+        return BackgroundColor
+      }
     }
+    // 不属于本月
     else {
-      //如果属于本月
-      if (this.showDate[1] == this.monthStart[1])
-        return DateStyle.FontColor.defaultColor
-      //如果不属于本月
-      return DateStyle.FontColor.unableColor
+      //如果设定为显示不属于本月的日期
+      if (this.showOtherMonth)
+        return DateStyle.FontColor.unableColor
+      // 否则和背景颜色一样，即隐形
+      else
+        return BackgroundColor
     }
   }
 
   private getBackgroundColor() {
-    // 如果是选中的日期
-    if (JSON.stringify(this.showDate) == JSON.stringify(this.selectDate)) {
-      return DateStyle.BackgroundColor.selectColor
+    //属于本月
+    if (this.showDate[1] == this.monthStart[1]) {
+      // 如果是选中的日期
+      if (JSON.stringify(this.showDate) == JSON.stringify(this.selectDate)) {
+        return DateStyle.BackgroundColor.selectColor
+      }
+      // 如果是今天
+      else if (JSON.stringify(this.showDate) == JSON.stringify(getToday())) {
+        return DateStyle.BackgroundColor.todayColor
+      }
+      else return BackgroundColor
     }
-    // 如果是今天
-    else if (JSON.stringify(this.showDate) == JSON.stringify(getToday())) {
-      return DateStyle.BackgroundColor.todayColor
-    }
+    //不属于本月的即使是选中日期或者今天 都不显示 字体颜色和背景颜色一样
     else return BackgroundColor
   }
 
@@ -60,7 +76,7 @@ export struct day {
       width: DateStyle.BorderWidth,
       color: this.getBackgroundColor()
     })
-    .borderRadius(ItemHeight / 2)
+    .borderRadius(this.ItemHeight / 2)
     .aspectRatio(1)
     .onClick(() => {
       if (this.showDate[1] == this.monthStart[1]) {

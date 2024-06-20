@@ -29,9 +29,7 @@ export const DateStyle: DateStyle = {
 
 export const BackgroundColor: ResourceColor = Color.White
 
-export const ItemHeight: number = 50
 
-export const ItemSpace: string | number = 15
 
 
 export interface TitleStyle {
@@ -42,18 +40,4 @@ export interface TitleStyle {
   BackgroundColor: ResourceColor
 }
 
-export const TopTitleStyle: TitleStyle = {
-  FontColor: "#252a34",
-  FontSize: 15,
-  FontWeight: FontWeight.Regular,
-  Height: 50,
-  BackgroundColor: 'white'
-}
-export const WeekTitleStyle :TitleStyle = {
-  FontColor: Color.Gray,
-  FontSize: 15,
-  FontWeight: FontWeight.Regular,
-  Height: 15,
-  BackgroundColor: 'white'
-}
 

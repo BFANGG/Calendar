@@ -11,7 +11,11 @@ export struct week {
   // 父组件中@State如果装饰的数组，其数组项也可以初始化@Prop。
   // 当前周组件要渲染的周数据
   @State data: number[][] = []
-
+  //----------样式控制属性----------
+  //是否显示其它月日期
+  private showOtherMonth: boolean
+  // 每行高度,默认为50
+  private ItemHeight: number
 
   aboutToAppear() {
     console.info("执行 aboutToAppear")
@@ -32,6 +36,8 @@ export struct week {
             selectDate: $selectDate,
             showDate: item,
             monthStart: this.monthStart,
+            showOtherMonth: this.showOtherMonth,
+            ItemHeight: this.ItemHeight
           })
         }
         .height('100%')
