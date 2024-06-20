@@ -16,7 +16,10 @@ export struct month {
   private showOtherMonth: boolean
   // 每行高度,默认为50
   private ItemHeight: number
-
+  // 选中日期的颜色
+  private selectColor:ResourceColor
+  // 今天的颜色
+  private todayColor:ResourceColor
   aboutToAppear() {
     //获取月视图第一天
     let temp = getStartDate(this.monthStart)
@@ -56,7 +59,9 @@ export struct month {
               weekStart: item,
               monthStart: this.monthStart,
               showOtherMonth: this.showOtherMonth,
-              ItemHeight:this.ItemHeight
+              ItemHeight:this.ItemHeight,
+              selectColor:this.selectColor,
+              todayColor:this.todayColor
             }
             )
           }

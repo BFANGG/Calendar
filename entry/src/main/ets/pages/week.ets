@@ -16,7 +16,10 @@ export struct week {
   private showOtherMonth: boolean
   // 每行高度,默认为50
   private ItemHeight: number
-
+  // 选中日期的颜色
+  private selectColor:ResourceColor
+  // 今天的颜色
+  private todayColor:ResourceColor
   aboutToAppear() {
     console.info("执行 aboutToAppear")
     // 一周七天
@@ -37,7 +40,9 @@ export struct week {
             showDate: item,
             monthStart: this.monthStart,
             showOtherMonth: this.showOtherMonth,
-            ItemHeight: this.ItemHeight
+            ItemHeight: this.ItemHeight,
+            selectColor:this.selectColor,
+            todayColor:this.todayColor
           })
         }
         .height('100%')

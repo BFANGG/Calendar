@@ -14,7 +14,10 @@ export struct day {
   private showOtherMonth: boolean
   // 每行高度,默认为50
   private ItemHeight: number
-
+  // 选中日期的颜色
+  private selectColor:ResourceColor
+  // 今天的颜色
+  private todayColor:ResourceColor
   private getTextColor(): ResourceColor {
     // 属于本月
     if (this.showDate[1] == this.monthStart[1]) {
@@ -43,11 +46,11 @@ export struct day {
     if (this.showDate[1] == this.monthStart[1]) {
       // 如果是选中的日期
       if (JSON.stringify(this.showDate) == JSON.stringify(this.selectDate)) {
-        return DateStyle.BackgroundColor.selectColor
+        return this.selectColor
       }
       // 如果是今天
       else if (JSON.stringify(this.showDate) == JSON.stringify(getToday())) {
-        return DateStyle.BackgroundColor.todayColor
+        return this.todayColor
       }
       else return BackgroundColor
     }
